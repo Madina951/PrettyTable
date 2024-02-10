@@ -1,0 +1,46 @@
+.func-table {
+    margin: 2.5%;
+    padding: 1%;
+    border: 1px #d5d5d5;
+    box-shadow: 2px 2px .8em #d4d4d4;
+}
+
+.func-table table{
+    overflow-x: auto;
+}
+
+.func-table__left, .func-table__right {
+    display: flex;
+    align-items: baseline;
+}
+
+.func-table__filters {
+    padding: 0.5rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.func-table__column-list {
+    position: absolute;
+    z-index: 1;
+    background-color: #fff;
+    padding: 0.5rem 1rem;
+    display: none;
+    border: 1px #d5d5d5;
+    box-shadow: 2px 2px .8em #d4d4d4; 
+}
+
+.func-table__column:hover .func-table__column-list {
+    display: block;
+}
+
+.func-table__show {
+    display: flex;
+    align-items: baseline;
+
+    label{
+        position: relative;
+        right: 0.5rem;
+    }
+}
