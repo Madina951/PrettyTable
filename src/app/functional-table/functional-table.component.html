@@ -1,78 +1,83 @@
-<div class="func-table">
+<ng-container *ngIf="init$ | async">
+    <div class="func-table">
 
-    <div class="func-table__filters">
-        <div class="func-table__column">
-            <p class="func-table__item">Filters <i class="bi bi-filter-left"></i> </p>
+        <div class="func-table__filters">
+            <div class="func-table__column">
+                <p class="func-table__item">Filters <i class="bi bi-filter-left"></i> </p>
 
-            <div class="func-table__column-list">
-                <p>Choose columns:</p>
-                <ul>
-                    <li *ngFor="let header of columns | keyvalue" class="form-check">
-                        <input class="form-check-input" type="checkbox" [(ngModel)]="columns[header.key]" [id]="header.key" [checked]="header.value"
-                        (ngModelChange)="changedColumns(header.key, $event)">
-                        <label class="form-check-label" [for]="header">{{header.key}}</label>
-                    </li>
-                </ul>
+                <div class="func-table__column-list">
+                    <p>Choose columns:</p>
+                    <ul>
+                        <li *ngFor="let header of columns | keyvalue" class="form-check">
+                            <input class="form-check-input" type="checkbox" [ngModel]="columns[header.key]"
+                                [id]="header.key" [checked]="header.value"
+                                (ngModelChange)="changedColumns(header.key, $event)">
+                            <label class="form-check-label" [for]="header">{{header.key}}</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="func-table__search">
+                <input type="text" class="form-control" [ngModel]="search$ | async" (ngModelChange)="setSearch($event)" placeholder="Search by tags">
+            </div>
+
+            <div class="func-table__show">
+                <label for="show">Show:</label>
+                <select name="show" id="" class="form-select" (change)="setPaging($event)">
+                    <option *ngFor="let num of numbers" [value]="num">{{num}}</option>
+                </select>
+            </div>
+
+            <div class="func-table__count">
+                <p>{{rowsCount$ | async}} results</p>
+            </div>
+
+            <div class="func-table__pagination">
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item" [class.disabled]="(activePage$ | async) === 1">
+                            <a class="page-link" href="#" aria-label="Previous" (click)="setPreviousPage()">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li *ngFor="let page of pages$ | async" class="page-item" [class.active]="page === (activePage$ | async)">
+                            <a class="page-link" href="#" (click)="setPage(page)">{{page}}</a>
+                        </li>
+                        <li class="page-item" [class.disabled]="(activePage$ | async) === pageCount">
+                            <a class="page-link" href="#" aria-label="Next" (click)="setNextPage()">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
 
-        <div class="func-table__search">
-            <input type="text" class="form-control" [value]="search" placeholder="Search">
-        </div>
-
-        <div class="func-table__show">
-            <label for="show">Show:</label>
-            <select name="show" id="" class="form-select">
-                <option *ngFor="let num of numbers" [value]="num">{{num}}</option>
-            </select>
-        </div>
-
-        <div class="func-table__count">
-            <p>{{rows.length}} results</p>
-        </div>
-
-        <div class="func-table__pagination">
-            <nav>
-                <ul class="pagination">
-                  <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                    </a>
-                  </li>
-                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
+        <div class="func-table__table">
+            <table class="table table-striped-columns table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th *ngFor="let header of (headers$ | async)" [hidden]="!columns[header]" (click)="setSort(header)">
+                            {{ header }}<i class="bi bi-sort-down-alt"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of (rows$ | async)">
+                        <td [hidden]="!columns['_id']">{{row._id}}</td>
+                        <td [hidden]="!columns['isActive']">{{row.isActive}}</td>
+                        <td [hidden]="!columns['balance']">{{row.balance}}</td>
+                        <td [hidden]="!columns['picture']"><img [src]="row.picture" alt=""></td>
+                        <td [hidden]="!columns['age']">{{row.age}}</td>
+                        <td [hidden]="!columns['name']">{{row.name?.first}} {{row.name?.last}}</td>
+                        <td [hidden]="!columns['company']">{{row.company}}</td>
+                        <td [hidden]="!columns['email']">{{row.email}}</td>
+                        <td [hidden]="!columns['address']">{{row.address}}</td>
+                        <td [hidden]="!columns['tags']">{{row.tags}}</td>
+                        <td [hidden]="!columns['favoriteFruit']">{{row.favoriteFruit}}</td>          
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-    
-
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th *ngFor="let header of headers" [hidden]="!columns[header]">{{ header }} </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let row of rows">
-                <td [hidden]="!columns['_id']">{{row._id}}</td>
-                <td [hidden]="!columns['isActive']">{{row.isActive}}</td>
-                <td [hidden]="!columns['balance']">{{row.balance}}</td>
-                <td [hidden]="!columns['picture']"><img [src]="row.picture" alt=""></td>
-                <td [hidden]="!columns['age']">{{row.age}}</td>
-                <td [hidden]="!columns['name']">{{row.name?.first + ' ' + row.name?.last}}</td>
-                <td [hidden]="!columns['company']">{{row.company}}</td>
-                <td [hidden]="!columns['email']">{{row.email}}</td>
-                <td [hidden]="!columns['address']">{{row.address}}</td>
-                <td [hidden]="!columns['tags']">{{row.tags}}</td>
-                <td [hidden]="!columns['favoriteFruit']">{{row.favoriteFruit}}</td>
-                
-            </tr>
-        </tbody>
-    </table>
-
-</div>
+</ng-container>

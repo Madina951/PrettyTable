@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpService } from "./http.service";
 import { Observable } from "rxjs";
-import { FakeBackend } from "./fake-backend";
 
 export type Order = 'ASC' | 'DESC';
 
@@ -12,7 +11,7 @@ export type FieldOrder = {
 
 export type Paging = {
     limit: number;
-    offset: number;
+    page: number;
 }
 
 export type TableRequest = {
@@ -21,7 +20,22 @@ export type TableRequest = {
     order: FieldOrder;
 }
 
-export type TableRow = {}
+export type TableRow = {
+    _id: string,
+    isActive: boolean,
+    balance: string,
+    picture: string,
+    age: number,
+    name: {
+        first: string,
+        last: string,
+    },
+    company: string,
+    email: string,
+    address: string,
+    tags: string[],
+    favoriteFruit: string, 
+}
 
 export type Table = {
     total: number;
@@ -35,12 +49,15 @@ export type Columns = {
 @Injectable({providedIn: 'root'})
 export class TableController {
     constructor(
-        private http: HttpService,
-        private fakeHttp: FakeBackend
+        private http: HttpService
     ) {}
 
     loadTable$(request: TableRequest): Observable<Table> {
-        return this.fakeHttp.loadTable$(request);
-        // return this.http.get<Table>('/api/table', request);
+        const params = {
+            search: request.search,
+            paging: JSON.stringify(request.paging),
+            order: JSON.stringify(request.order)
+        }
+        return this.http.get<Table>('/api/table', params);
     }
 }

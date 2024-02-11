@@ -2,20 +2,23 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } fr
 import { Injectable } from "@angular/core";
 import { Observable, map, switchMap, tap } from "rxjs";
 import { FakeBackend } from "./fake-backend";
+import { TableRequest } from "./table-controller";
 
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
 
-    constructor(
-        private fakeBackend: FakeBackend
-    ) {}
+    private fakeBackend = new FakeBackend();
+
+    constructor() {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        if(req.url.startsWith('api/table')) {
-
-            console.log("interceptor works!")
-            return next.handle(req);
+        if(req.url.endsWith('api/table')) {
+            return this.fakeBackend.loadTable$({
+                search: req.params.get('search'),
+                paging: JSON.parse(req.params.get('paging')),
+                order: JSON.parse(req.params.get('order'))
+            });
         }
         return next.handle(req);
     }

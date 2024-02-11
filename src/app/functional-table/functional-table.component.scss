@@ -19,6 +19,7 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 .func-table__column-list {
@@ -42,5 +43,14 @@
     label{
         position: relative;
         right: 0.5rem;
+    }
+}
+
+.func-table__table {
+    overflow-x: scroll;
+
+    th {
+        cursor: pointer;
+        min-width: 7rem;
     }
 }
